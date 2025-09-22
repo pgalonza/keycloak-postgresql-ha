@@ -1,0 +1,211 @@
+services:
+  consul-server1:
+    image: hashicorp/consul:1.21
+    restart: always
+    command: "agent -server -retry-join=consul-server2 -node=consul-server1 -data-dir='/consul/data' -bootstrap-expect=3 -client=0.0.0.0 -ui"
+    ports:
+      - "8500:8500"
+      - "8600:8600/tcp"
+      - "8600:8600/udp"
+    networks:
+      - study-network
+  consul-server2:
+    image: hashicorp/consul:1.21
+    restart: always
+    command: "agent -server -retry-join=consul-server1 -node=consul-server2 -data-dir='/consul/data' -bootstrap-expect=3 -client=0.0.0.0 -ui"
+    networks:
+      - study-network
+  consul-server3:
+    image: hashicorp/consul:1.21
+    restart: always
+    command: "agent -server -retry-join=consul-server1 -node=consul-server3 -data-dir='/consul/data' -bootstrap-expect=3 -client=0.0.0.0 -ui"
+    networks:
+      - study-network
+  consul-client1:
+    image: hashicorp/consul:1.21
+    restart: always
+    networks:
+      - study-network
+    command: "agent -node=consul-client1 -client=0.0.0.0 -data-dir='/consul/data' -retry-join=consul-server1 -retry-join=consul-server2"
+    depends_on:
+      - consul-server1
+      - consul-server2
+      - consul-server3
+  postgresql-patroni1:
+    build: ./pgsql-patroni
+    environment:
+      PATRONI_NAME: postgresql1
+      PATRONI_RESTAPI_LISTEN: 0.0.0.0:8008
+      PATRONI_POSTGRESQL_LISTEN: 0.0.0.0:5432
+      PATRONI_SUPERUSER_USERNAME: postgres
+      PATRONI_SUPERUSER_PASSWORD: supersecret
+      PATRONI_REPLICATION_USERNAME: replicator
+      PATRONI_REPLICATION_PASSWORD: repsecret
+      PATRONI_CONSUL_HOST: consul-client1:8500
+      PATRONI_CONSUL_URL: http://consul-client1:8500
+      PATRONI_CONSUL_REGISTER_SERVICE: false
+    networks:
+      - study-network
+    depends_on:
+      - consul-client1
+  postgresql-patroni2:
+    build: ./pgsql-patroni
+    environment:
+      PATRONI_NAME: postgresql2
+      PATRONI_RESTAPI_LISTEN: 0.0.0.0:8008
+      PATRONI_POSTGRESQL_LISTEN: 0.0.0.0:5432
+      PATRONI_SUPERUSER_USERNAME: postgres
+      PATRONI_SUPERUSER_PASSWORD: supersecret
+      PATRONI_REPLICATION_USERNAME: replicator
+      PATRONI_REPLICATION_PASSWORD: repsecret
+      PATRONI_CONSUL_HOST: consul-client1:8500
+      PATRONI_CONSUL_URL: http://consul-client1:8500
+      PATRONI_CONSUL_REGISTER_SERVICE: false
+    networks:
+      - study-network
+    depends_on:
+      - consul-client1
+  postgresql-patroni3:
+    build: ./pgsql-patroni
+    environment:
+      PATRONI_NAME: postgresql3
+      PATRONI_RESTAPI_LISTEN: 0.0.0.0:8008
+      PATRONI_POSTGRESQL_LISTEN: 0.0.0.0:5432
+      PATRONI_SUPERUSER_USERNAME: postgres
+      PATRONI_SUPERUSER_PASSWORD: supersecret
+      PATRONI_REPLICATION_USERNAME: replicator
+      PATRONI_REPLICATION_PASSWORD: repsecret
+      PATRONI_CONSUL_HOST: consul-client1:8500
+      PATRONI_CONSUL_URL: http://consul-client1:8500
+      PATRONI_CONSUL_REGISTER_SERVICE: false
+    networks:
+      - study-network
+    depends_on:
+      - consul-client1
+
+  pgbouncer1:
+    image: bitnami/pgbouncer:1.24.1
+    environment:
+      - PGBOUNCER_AUTH_TYPE=md5
+      - PGBOUNCER_AUTH_USER=postgres
+      - POSTGRESQL_HOST=postgresql-patroni1
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=supersecret
+      - PGBOUNCER_DATABASE=*
+      - GBOUNCER_USERLIST_FILE=/bitnami/userlists.txt
+      - PGBOUNCER_PORT=6432
+    volumes:
+      - ./pgbouncer/userlists.txt:/bitnami/userlists.txt
+      - ./keycloak/init-postgresql:/docker-entrypoint-initdb.d
+    ports:
+      - 6432:6432
+    networks:
+      - study-network
+    depends_on:
+      - postgresql-patroni1
+
+  pgbouncer2:
+    image: bitnami/pgbouncer:1.24.1
+    environment:
+      - PGBOUNCER_AUTH_TYPE=md5
+      - PGBOUNCER_AUTH_USER=postgres
+      - POSTGRESQL_HOST=postgresql-patroni2
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=supersecret
+      - PGBOUNCER_DATABASE=*
+      - GBOUNCER_USERLIST_FILE=/bitnami/userlists.txt
+      - PGBOUNCER_PORT=6432
+    volumes:
+      - ./pgbouncer/userlists.txt:/bitnami/userlists.txt
+      - ./keycloak/init-postgresql:/docker-entrypoint-initdb.d
+    networks:
+      - study-network
+    depends_on:
+      - postgresql-patroni2
+
+  pgbouncer3:
+    image: bitnami/pgbouncer:1.24.1
+    environment:
+      - PGBOUNCER_AUTH_TYPE=md5
+      - PGBOUNCER_AUTH_USER=postgres
+      - POSTGRESQL_HOST=postgresql-patroni3
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=supersecret
+      - PGBOUNCER_DATABASE=*
+      - GBOUNCER_USERLIST_FILE=/bitnami/userlists.txt
+      - PGBOUNCER_PORT=6432
+    volumes:
+      - ./pgbouncer/userlists.txt:/bitnami/userlists.txt
+      - ./keycloak/init-postgresql:/docker-entrypoint-initdb.d
+    networks:
+      - study-network
+    depends_on:
+      - postgresql-patroni3
+
+  haproxy-db:
+    image: haproxy:3.2
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    volumes:
+      - ./haproxy/haproxy-db.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    networks:
+      - study-network
+    depends_on:
+      - pgbouncer1
+      - pgbouncer2
+      - pgbouncer3
+
+  keycloak1:
+    image: quay.io/keycloak/keycloak:25.0
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://haproxy-db:5000/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KC_DB_SCHEMA: keycloak
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_CACHE: ispn
+      KC_HOSTNAME_STRICT: false
+      KC_PROXY_HEADERS: forwarded
+      KC_HEALTH_ENABLED: true
+    command: [ "start-dev", "--http-port=8081" ]
+    networks:
+      - study-network
+    depends_on:
+      - haproxy-db
+  keycloak2:
+    image: quay.io/keycloak/keycloak:25.0
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://haproxy-db:5000/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KC_DB_SCHEMA: keycloak
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_CACHE: ispn
+      KC_HOSTNAME_STRICT: false
+      KC_PROXY_HEADERS: forwarded
+      KC_HEALTH_ENABLED: true
+    command: [ "start-dev", "--http-port=8081" ]
+    networks:
+      - study-network
+    depends_on:
+      - haproxy-db
+  haproxy-kc:
+    image: haproxy:3.2
+    ports:
+      - "80:80"
+    volumes:
+      - ./haproxy/haproxy-kc.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    networks:
+      - study-network
+    depends_on:
+      - keycloak1
+      - keycloak2
+
+networks:
+  study-network:
+    driver: bridge

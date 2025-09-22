@@ -1,0 +1,37 @@
+@startuml c4-container-diagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Title "Container Diagram"
+
+
+Person(user, "User")
+
+System_Boundary(app_stand, "App Stand"){
+    Container(haproxy_kc, "Keycloak Balancer", "haproxy")
+    Container(keycloak1, "Identity Provider", "keycloak")
+
+    Container(haproxy_db, "Database Balancer", "haproxy")
+    Container(pgbouncer1, "Connetction pooler", "pgbouncer")
+    Container(postgresql1, "Database", "postgresql")
+    Container(patroni1, "HA Solution", "patroni")
+    Container(consul_client1, "K/C Client", "consul")
+    Container(consul_server1, "K/V Server", "consul")
+
+    Rel_D(haproxy_kc, keycloak1, "HTTP", "health-check")
+    Rel_D(keycloak1, haproxy_db, "PSQL")
+    Rel_D(haproxy_db, pgbouncer1, "PSQL")
+    Rel_D(haproxy_db, patroni1, "HTTP", "health-check")
+    Rel_D(pgbouncer1, postgresql1, "PSQL")
+    Rel_D(patroni1, consul_client1, "HTTP")
+    Rel_L(patroni1, postgresql1, "shell", "pg_ctl, pg_basebackup, pg_rewind, psql")
+    Rel_D(consul_client1, consul_server1, "RPC,Gossip")
+}
+
+Rel(user, haproxy_kc, "HTTP", "keycloak UI, haproxy stats")
+Rel(user, keycloak1, "HTTP", "keycloak health")
+Rel(user, haproxy_db, "HTTP", "haproxy stats")
+Rel(user, pgbouncer1, "PSQL", "pgbouncer stats")
+Rel(user, patroni1, "HTTP", "patroni stats")
+Rel(user, consul_server1, "HTTP", "consul UI")")
+
+@enduml
