@@ -19,6 +19,8 @@ This project is a demo of Keycloak and PostgreSQL in high availability configura
 * **PgBouncer** - Connection pooler for PostgreSQL
 * **HAProxy** - Load balancer and proxy server
 * **Consul** - Service mesh and service discovery
+* **Prometheus** - Monitoring and alerting system
+* **Grafana** - Open source analytics and monitoring solution
 
 ## 📊 Diagrams
 
