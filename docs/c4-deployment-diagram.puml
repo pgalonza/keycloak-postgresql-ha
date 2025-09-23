@@ -21,17 +21,17 @@ Container(pgbouncer2, "Connetction pooler", "pgbouncer")
 
 Deployment_Node(node1, "Database node 1"){
     Container(postgresql1, "Database", "postgresql")
-    Container(patroni1, "HA Solution", "patroni")
+    Container(patroni1, "DB HA Solution", "patroni")
     Rel_L(patroni1, postgresql1, "shell", "pg_ctl, pg_basebackup, pg_rewind, psql")
 }
 Deployment_Node(node2, "Database node 2"){
     Container(postgresql2, "Database", "postgresql")
-    Container(patroni2, "HA Solution", "patroni")
+    Container(patroni2, "DB HA Solution", "patroni")
     Rel_L(patroni2, postgresql2, "shell", "pg_ctl, pg_basebackup, pg_rewind, psql")
 }
 Deployment_Node(node3, "Database node 3"){
     Container(postgresql3, "Database", "postgresql")
-    Container(patroni3, "HA Solution", "patroni")
+    Container(patroni3, "DB HA Solution", "patroni")
     Rel_L(patroni3, postgresql3, "shell", "pg_ctl, pg_basebackup, pg_rewind, psql")
 }
 
@@ -49,15 +49,14 @@ Rel_D(pgbouncer1, postgresql1, "PSQL")
 Rel_D(pgbouncer2, postgresql2, "PSQL")
 Rel_D(pgbouncer3, postgresql3, "PSQL")
 
-Container(consul_client1, "K/V Client", "consul")
+Container(consul_client1, "Distributed K/V Client", "consul")
 Rel_D(patroni1,consul_client1, "HTTP")
 Rel_D(patroni2,consul_client1, "HTTP")
 Rel_D(patroni3,consul_client1, "HTTP")
 
-
-Container(consul_server1, "K/V Server", "consul")
-Container(consul_server2, "K/V Server", "consul")
-Container(consul_server3, "K/V Server", "consul")
+Container(consul_server1, "Distributed K/V Server", "consul")
+Container(consul_server2, "Distributed K/V Server", "consul")
+Container(consul_server3, "Distributed K/V Server", "consul")
 
 Rel(consul_client1, consul_server1, "RPC,Gossip")
 Rel(consul_client1, consul_server2, "RPC,Gossip")

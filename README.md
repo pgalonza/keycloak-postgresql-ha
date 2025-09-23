@@ -6,12 +6,12 @@ This project is a demo of Keycloak and PostgreSQL in high availability configura
 
 ### Key Features
 
-* **Automated Failover** using Patroni
-* **Load Balancing** with HAProxy
-* **Connection Pooling** via PgBouncer
-* **Service Discovery** using Consul
+* One-Click Deployment - Simplify your setup process with a single command: docker compose up -d. No complex configurations or multiple steps required.
+* Auto-Configuration - Enjoy seamless out-of-the-box experience. All necessary settings are automatically configured, eliminating the need for manual adjustments.
+* Containerized Solution - Leverage Docker for consistent and reliable deployments across any environment.
+* Educational Environment - Perfect for learning and experimentation. Provides a safe and controlled lab environment for studying system behavior, testing new ideas, and gaining hands-on experience.
 
-## 🏗️ Components
+### 🏗️ Components
 
 * **Keycloak** - Open Source Identity and Access Management solution
 * **PostgreSQL** - Relational database system
@@ -22,7 +22,7 @@ This project is a demo of Keycloak and PostgreSQL in high availability configura
 * **Prometheus** - Monitoring and alerting system
 * **Grafana** - Open source analytics and monitoring solution
 
-## 📊 Diagrams
+### 📊 Diagrams
 
 ![C4 container](./docs/c4-container-diagram.png)
 ![C4 deployment](./docs/c4-deployment-diagram.png)
@@ -33,12 +33,14 @@ This project is a demo of Keycloak and PostgreSQL in high availability configura
 
 - Docker
 - Docker Compose
+- Minimal 2 Cores and 4GB free RAM
 
 ### Getting Started
 
 1. Clone the repository
-2. Run `docker-compose up -d`
-3. Open http://localhost in your browser
+2. Move to the project directory
+3. Run `docker-compose up -d`
+4. Open http://localhost in your browser
 
 ## System Endpoints Overview
 
@@ -61,6 +63,10 @@ This project is a demo of Keycloak and PostgreSQL in high availability configura
 
 * **PgBouncer Statistics** - SHOW SQL commands
   * The console is available by connecting as normal to the database pgbouncer
+* **Grafana** - http://localhost:3000, http://\<grafana\>:3000
+  * Dashboard for monitoring and alerting
+* **Prometheus** - http://localhost:9090, http://\<prometheus\>:9090
+  * Prometheus monitoring system
 
 ## License
 

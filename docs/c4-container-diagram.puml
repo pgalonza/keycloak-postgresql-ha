@@ -13,9 +13,9 @@ System_Boundary(app_stand, "App Stand"){
     Container(haproxy_db, "Database Balancer", "haproxy")
     Container(pgbouncer1, "Connetction pooler", "pgbouncer")
     Container(postgresql1, "Database", "postgresql")
-    Container(patroni1, "HA Solution", "patroni")
-    Container(consul_client1, "K/C Client", "consul")
-    Container(consul_server1, "K/V Server", "consul")
+    Container(patroni1, "DB HA Solution", "patroni")
+    Container(consul_client1, "Distributed K/V Client", "consul")
+    Container(consul_server1, "Distributed K/V Server", "consul")
 
     Rel_D(haproxy_kc, keycloak1, "HTTP", "health-check")
     Rel_D(keycloak1, haproxy_db, "PSQL")
@@ -32,6 +32,6 @@ Rel(user, keycloak1, "HTTP", "keycloak health")
 Rel(user, haproxy_db, "HTTP", "haproxy stats")
 Rel(user, pgbouncer1, "PSQL", "pgbouncer stats")
 Rel(user, patroni1, "HTTP", "patroni stats")
-Rel(user, consul_server1, "HTTP", "consul UI")")
+Rel(user, consul_server1, "HTTP", "consul UI")
 
 @enduml
