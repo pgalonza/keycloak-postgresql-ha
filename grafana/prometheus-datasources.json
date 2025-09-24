@@ -1,1 +1,0 @@
-{"name":"prometheus","type":"prometheus","typeName":"Prometheus","typeLogoUrl":"public/plugins/prometheus/img/prometheus_logo.svg","access":"proxy","url":"http://prometheus:9090","basicAuth":false,"isDefault":true,"readOnly":false}

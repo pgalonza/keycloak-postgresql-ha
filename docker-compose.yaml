@@ -219,27 +219,12 @@ services:
     image: grafana/grafana-enterprise:12.1.0
     ports:
       - '3000:3000'
-    networks:
-      - study-network
-  grafana-import-datasource:
-    image: alpine/curl:8.14.1
-    command: "-X POST -H 'Content-Type: application/json' --data @/tmp/datasources.json -u admin:admin http://grafana:3000/api/datasources"
     volumes:
-      - ./grafana/prometheus-datasources.json:/tmp/datasources.json
+      - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./grafana/example-dashboard.json:/etc/dashboards/example-dashboard.json
     networks:
       - study-network
-    depends_on:
-      - grafana
-
-  grafana-import-dashboard:
-    image: alpine/curl:8.14.1
-    command: "-X POST -H 'Content-Type: application/json' --data @/tmp/dashboard.json -u admin:admin http://grafana:3000/apis/dashboard.grafana.app/v1beta1/namespaces/default/dashboards"
-    volumes:
-      - ./grafana/example-dashboard.json:/tmp/dashboard.json
-    networks:
-      - study-network
-    depends_on:
-      - grafana-import-datasource
 
 
 networks:
