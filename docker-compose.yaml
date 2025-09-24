@@ -175,6 +175,7 @@ services:
       KC_HOSTNAME_STRICT: false
       KC_PROXY_HEADERS: forwarded
       KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
     command: [ "start-dev", "--http-port=8081" ]
     <<: [*x-logging-loki, *x-network]
     depends_on:
@@ -195,6 +196,7 @@ services:
       KC_HOSTNAME_STRICT: false
       KC_PROXY_HEADERS: forwarded
       KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
     command: [ "start-dev", "--http-port=8081" ]
     <<: [*x-logging-loki, *x-network]
     depends_on:
