@@ -1,8 +1,14 @@
+x-logging-loki: &x-logging-loki
+  logging:
+    driver: loki
+    options:
+      loki-url: "http://localhost:3100/loki/api/v1/push"
 services:
   consul-server1:
     image: hashicorp/consul:1.21
     restart: always
     command: "agent -server -retry-join=consul-server2 -node=consul-server1 -data-dir='/consul/data' -bootstrap-expect=3 -client=0.0.0.0 -ui"
+    <<: *x-logging-loki
     ports:
       - "8500:8500"
       - "8600:8600/tcp"
@@ -13,24 +19,29 @@ services:
     image: hashicorp/consul:1.21
     restart: always
     command: "agent -server -retry-join=consul-server1 -node=consul-server2 -data-dir='/consul/data' -bootstrap-expect=3 -client=0.0.0.0 -ui"
+    <<: *x-logging-loki
     networks:
       - study-network
   consul-server3:
     image: hashicorp/consul:1.21
     restart: always
     command: "agent -server -retry-join=consul-server1 -node=consul-server3 -data-dir='/consul/data' -bootstrap-expect=3 -client=0.0.0.0 -ui"
+    <<: *x-logging-loki
     networks:
       - study-network
   consul-client1:
     image: hashicorp/consul:1.21
     restart: always
+    command: "agent -node=consul-client1 -client=0.0.0.0 -data-dir='/consul/data' -retry-join=consul-server1 -retry-join=consul-server2"
+    <<: *x-logging-loki
     networks:
       - study-network
-    command: "agent -node=consul-client1 -client=0.0.0.0 -data-dir='/consul/data' -retry-join=consul-server1 -retry-join=consul-server2"
     depends_on:
       - consul-server1
       - consul-server2
       - consul-server3
+      - loki
+
   postgresql-patroni1:
     build: ./pgsql-patroni
     environment:
@@ -44,10 +55,13 @@ services:
       PATRONI_CONSUL_HOST: consul-client1:8500
       PATRONI_CONSUL_URL: http://consul-client1:8500
       PATRONI_CONSUL_REGISTER_SERVICE: false
+    <<: *x-logging-loki
     networks:
       - study-network
     depends_on:
       - consul-client1
+      - loki
+
   postgresql-patroni2:
     build: ./pgsql-patroni
     environment:
@@ -61,10 +75,13 @@ services:
       PATRONI_CONSUL_HOST: consul-client1:8500
       PATRONI_CONSUL_URL: http://consul-client1:8500
       PATRONI_CONSUL_REGISTER_SERVICE: false
+    <<: *x-logging-loki
     networks:
       - study-network
     depends_on:
       - consul-client1
+      - loki
+
   postgresql-patroni3:
     build: ./pgsql-patroni
     environment:
@@ -78,10 +95,12 @@ services:
       PATRONI_CONSUL_HOST: consul-client1:8500
       PATRONI_CONSUL_URL: http://consul-client1:8500
       PATRONI_CONSUL_REGISTER_SERVICE: false
+    <<: *x-logging-loki
     networks:
       - study-network
     depends_on:
       - consul-client1
+      - loki
 
   pgbouncer1:
     image: bitnami/pgbouncer:1.24.1
@@ -94,6 +113,7 @@ services:
       - PGBOUNCER_DATABASE=*
       - GBOUNCER_USERLIST_FILE=/bitnami/userlists.txt
       - PGBOUNCER_PORT=6432
+    <<: *x-logging-loki
     volumes:
       - ./pgbouncer/userlists.txt:/bitnami/userlists.txt
       - ./keycloak/init-postgresql:/docker-entrypoint-initdb.d
@@ -103,6 +123,7 @@ services:
       - study-network
     depends_on:
       - postgresql-patroni1
+      - loki
 
   pgbouncer2:
     image: bitnami/pgbouncer:1.24.1
@@ -115,6 +136,7 @@ services:
       - PGBOUNCER_DATABASE=*
       - GBOUNCER_USERLIST_FILE=/bitnami/userlists.txt
       - PGBOUNCER_PORT=6432
+    <<: *x-logging-loki
     volumes:
       - ./pgbouncer/userlists.txt:/bitnami/userlists.txt
       - ./keycloak/init-postgresql:/docker-entrypoint-initdb.d
@@ -122,6 +144,7 @@ services:
       - study-network
     depends_on:
       - postgresql-patroni2
+      - loki
 
   pgbouncer3:
     image: bitnami/pgbouncer:1.24.1
@@ -134,6 +157,7 @@ services:
       - PGBOUNCER_DATABASE=*
       - GBOUNCER_USERLIST_FILE=/bitnami/userlists.txt
       - PGBOUNCER_PORT=6432
+    <<: *x-logging-loki
     volumes:
       - ./pgbouncer/userlists.txt:/bitnami/userlists.txt
       - ./keycloak/init-postgresql:/docker-entrypoint-initdb.d
@@ -141,12 +165,14 @@ services:
       - study-network
     depends_on:
       - postgresql-patroni3
+      - loki
 
   haproxy-db:
     image: haproxy:3.2
     ports:
       - "5000:5000"
       - "5001:5001"
+    <<: *x-logging-loki
     volumes:
       - ./haproxy/haproxy-db.cfg:/usr/local/etc/haproxy/haproxy.cfg
     networks:
@@ -155,6 +181,7 @@ services:
       - pgbouncer1
       - pgbouncer2
       - pgbouncer3
+      - loki
 
   keycloak1:
     image: quay.io/keycloak/keycloak:25.0
@@ -171,10 +198,13 @@ services:
       KC_PROXY_HEADERS: forwarded
       KC_HEALTH_ENABLED: true
     command: [ "start-dev", "--http-port=8081" ]
+    <<: *x-logging-loki
     networks:
       - study-network
     depends_on:
       - haproxy-db
+      - loki
+
   keycloak2:
     image: quay.io/keycloak/keycloak:25.0
     environment:
@@ -190,14 +220,18 @@ services:
       KC_PROXY_HEADERS: forwarded
       KC_HEALTH_ENABLED: true
     command: [ "start-dev", "--http-port=8081" ]
+    <<: *x-logging-loki
     networks:
       - study-network
     depends_on:
       - haproxy-db
+      - loki
+
   haproxy-kc:
     image: haproxy:3.2
     ports:
       - "80:80"
+    <<: *x-logging-loki
     volumes:
       - ./haproxy/haproxy-kc.cfg:/usr/local/etc/haproxy/haproxy.cfg
     networks:
@@ -205,13 +239,22 @@ services:
     depends_on:
       - keycloak1
       - keycloak2
+      - loki
 
   prometheus:
     image: prom/prometheus:v3.6.0
     ports:
       - "9090:9090"
+    <<: *x-logging-loki
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - study-network
+
+  loki:
+    image: grafana/loki:3.5
+    ports:
+      - "3100:3100"
     networks:
       - study-network
 
@@ -219,6 +262,7 @@ services:
     image: grafana/grafana-enterprise:12.1.0
     ports:
       - '3000:3000'
+    <<: *x-logging-loki
     volumes:
       - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
       - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml

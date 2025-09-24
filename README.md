@@ -33,14 +33,16 @@ This project is a demo of Keycloak and PostgreSQL in high availability configura
 
 - Docker
 - Docker Compose
+- Docker plugin loki-docker-driver
 - Minimal 2 Cores and 4GB free RAM
 
 ### Getting Started
 
-1. Clone the repository
-2. Move to the project directory
-3. Run `docker-compose up -d`
-4. Open http://localhost in your browser
+1. Install docker plugin loki-docker-driver `docker plugin install grafana/loki-docker-driver --alias loki --grant-all-permissions`
+2. Clone the project repository
+3. Move to the project directory
+4. Run `docker-compose up -d`
+5. Open http://localhost in your browser
 
 ## System Endpoints Overview
 
