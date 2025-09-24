@@ -21,6 +21,7 @@ This project is a demo of Keycloak and PostgreSQL in high availability configura
 * **Consul** - Service mesh and service discovery
 * **Prometheus** - Monitoring and alerting system
 * **Grafana** - Open source analytics and monitoring solution
+* **Loki** - Open source log aggregation and monitoring system
 
 ### 📊 Diagrams
 
