@@ -104,7 +104,7 @@ services:
       - PGBOUNCER_PORT=6432
     volumes:
       - ./pgbouncer/userlists.txt:/bitnami/userlists.txt
-      - ./keycloak/init-postgresql:/docker-entrypoint-initdb.d
+      - ./pgbouncer/init-postgresql:/docker-entrypoint-initdb.d
     ports:
       - 6432:6432
     <<: [*x-logging-loki, *x-network]
@@ -125,7 +125,7 @@ services:
       - PGBOUNCER_PORT=6432
     volumes:
       - ./pgbouncer/userlists.txt:/bitnami/userlists.txt
-      - ./keycloak/init-postgresql:/docker-entrypoint-initdb.d
+      - ./pgbouncer/init-postgresql:/docker-entrypoint-initdb.d
     <<: [*x-logging-loki, *x-network]
     depends_on:
       - postgresql-patroni2
@@ -144,7 +144,7 @@ services:
       - PGBOUNCER_PORT=6432
     volumes:
       - ./pgbouncer/userlists.txt:/bitnami/userlists.txt
-      - ./keycloak/init-postgresql:/docker-entrypoint-initdb.d
+      - ./pgbouncer/init-postgresql:/docker-entrypoint-initdb.d
     <<: [*x-logging-loki, *x-network]
     depends_on:
       - postgresql-patroni3
