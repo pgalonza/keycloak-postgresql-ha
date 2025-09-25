@@ -68,7 +68,7 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 3,
+        "w": 4,
         "x": 0,
         "y": 0
       },
@@ -114,6 +114,87 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
+        "uid": "eeyyp0m56fu2ob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "count_over_time(sum (up{job=\"keycloak-metrics\"} > 0)[21600s:30s])/count_over_time(vector(1)[21600s:30s]) "
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 4,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "count_over_time(sum (up{job=\"keycloak-metrics\"} > 0)[$__range:$__interval])/count_over_time(vector(1)[$__range:$__interval]) ",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Keycloak Availability",
+      "type": "stat"
+    },
+    {
+      "datasource": {
         "type": "loki",
         "uid": "aez1a57l6heyoe"
       },
@@ -123,9 +204,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 14,
+        "w": 24,
         "x": 0,
-        "y": 2
+        "y": 4
       },
       "id": 7,
       "options": {
@@ -167,10 +248,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
-        "w": 14,
+        "h": 8,
+        "w": 24,
         "x": 0,
-        "y": 10
+        "y": 12
       },
       "id": 3,
       "options": {
@@ -212,8 +293,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
-        "w": 14,
+        "h": 7,
+        "w": 24,
         "x": 0,
         "y": 20
       },
@@ -258,10 +339,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
-        "w": 14,
+        "h": 8,
+        "w": 24,
         "x": 0,
-        "y": 29
+        "y": 27
       },
       "id": 4,
       "options": {
@@ -303,10 +384,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
-        "w": 14,
+        "h": 9,
+        "w": 24,
         "x": 0,
-        "y": 39
+        "y": 35
       },
       "id": 5,
       "options": {
@@ -348,10 +429,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
-        "w": 14,
+        "h": 9,
+        "w": 24,
         "x": 0,
-        "y": 49
+        "y": 44
       },
       "id": 6,
       "options": {

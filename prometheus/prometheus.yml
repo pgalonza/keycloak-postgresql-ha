@@ -7,3 +7,9 @@ scrape_configs:
       - targets:
           - haproxy-kc:8405
           - haproxy-db:8405
+  - job_name: 'keycloak-metrics'
+    scrape_interval: 3s
+    static_configs:
+      - targets:
+          - keycloak1:9000
+          - keycloak2:9000
