@@ -50,6 +50,8 @@ services:
       PATRONI_CONSUL_HOST: consul-client1:8500
       PATRONI_CONSUL_URL: http://consul-client1:8500
       PATRONI_CONSUL_REGISTER_SERVICE: false
+    volumes:
+      - ./pgsql-patroni/patroni.yml:/etc/patroni/patroni.yml
     <<: [*x-logging-loki, *x-network]
     depends_on:
       - consul-client1
@@ -68,6 +70,8 @@ services:
       PATRONI_CONSUL_HOST: consul-client1:8500
       PATRONI_CONSUL_URL: http://consul-client1:8500
       PATRONI_CONSUL_REGISTER_SERVICE: false
+    volumes:
+      - ./pgsql-patroni/patroni.yml:/etc/patroni/patroni.yml
     <<: [*x-logging-loki, *x-network]
     depends_on:
       - consul-client1
@@ -86,6 +90,8 @@ services:
       PATRONI_CONSUL_HOST: consul-client1:8500
       PATRONI_CONSUL_URL: http://consul-client1:8500
       PATRONI_CONSUL_REGISTER_SERVICE: false
+    volumes:
+      - ./pgsql-patroni/patroni.yml:/etc/patroni/patroni.yml
     <<: [*x-logging-loki, *x-network]
     depends_on:
       - consul-client1
@@ -94,13 +100,13 @@ services:
   pgbouncer1:
     image: bitnami/pgbouncer:1.24.1
     environment:
-      - PGBOUNCER_AUTH_TYPE=md5
+      - PGBOUNCER_AUTH_TYPE=scram-sha-256
       - PGBOUNCER_AUTH_USER=postgres
       - POSTGRESQL_HOST=postgresql-patroni1
       - POSTGRESQL_USERNAME=postgres
       - POSTGRESQL_PASSWORD=supersecret
       - PGBOUNCER_DATABASE=*
-      - GBOUNCER_USERLIST_FILE=/bitnami/userlists.txt
+      - PGBOUNCER_USERLIST_FILE=/bitnami/userlists.txt
       - PGBOUNCER_PORT=6432
     volumes:
       - ./pgbouncer/userlists.txt:/bitnami/userlists.txt
@@ -115,13 +121,13 @@ services:
   pgbouncer2:
     image: bitnami/pgbouncer:1.24.1
     environment:
-      - PGBOUNCER_AUTH_TYPE=md5
+      - PGBOUNCER_AUTH_TYPE=scram-sha-256
       - PGBOUNCER_AUTH_USER=postgres
       - POSTGRESQL_HOST=postgresql-patroni2
       - POSTGRESQL_USERNAME=postgres
       - POSTGRESQL_PASSWORD=supersecret
       - PGBOUNCER_DATABASE=*
-      - GBOUNCER_USERLIST_FILE=/bitnami/userlists.txt
+      - PGBOUNCER_USERLIST_FILE=/bitnami/userlists.txt
       - PGBOUNCER_PORT=6432
     volumes:
       - ./pgbouncer/userlists.txt:/bitnami/userlists.txt
@@ -134,13 +140,13 @@ services:
   pgbouncer3:
     image: bitnami/pgbouncer:1.24.1
     environment:
-      - PGBOUNCER_AUTH_TYPE=md5
+      - PGBOUNCER_AUTH_TYPE=scram-sha-256
       - PGBOUNCER_AUTH_USER=postgres
       - POSTGRESQL_HOST=postgresql-patroni3
       - POSTGRESQL_USERNAME=postgres
       - POSTGRESQL_PASSWORD=supersecret
       - PGBOUNCER_DATABASE=*
-      - GBOUNCER_USERLIST_FILE=/bitnami/userlists.txt
+      - PGBOUNCER_USERLIST_FILE=/bitnami/userlists.txt
       - PGBOUNCER_PORT=6432
     volumes:
       - ./pgbouncer/userlists.txt:/bitnami/userlists.txt

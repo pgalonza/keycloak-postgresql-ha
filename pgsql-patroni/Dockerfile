@@ -25,7 +25,7 @@ RUN mkdir -p ${PG_DATA_DIR} ${PATRONI_DIR} \
     && chmod -R 755 ${PATRONI_DIR}
 
 COPY ./entrypoint.sh /
-COPY --chown=postgres:postgres ./patroni.yml ${PATRONI_DIR}/patroni.yml
+# COPY --chown=postgres:postgres ./patroni.yml ${PATRONI_DIR}/patroni.yml
 USER postgres
 WORKDIR ${PATRONI_DIR}
 ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]

@@ -1,2 +1,2 @@
-"postgres" "md53793aa8c744f03a823d64f81d084df8f"
-"keycloak" "md5bd69350b74d6ed3bc1f2d27dba8c57a7"
+"keycloak" "keycloak"
+"pgbouncer" "SCRAM-SHA-256$4096:7dmoPUNLe2dzz2ZnqEbR8g==$y3anyEDRU2tPB1kBtyfoZF7VVU17YEoLcetFS3ACtRE=:8OjqKtly06R0WS4uOM9ioa1Qf7ImnHZD/YQtrchDrDE="
