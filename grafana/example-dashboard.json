@@ -31,6 +31,92 @@
           "color": {
             "mode": "thresholds"
           },
+          "fieldMinMax": false,
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "bool_on_off"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "name",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.1.0",
+      "targets": [
+        {
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "exemplar": false,
+          "expr": "pgbouncer_up{job=\"pgbouncer-metrics\"}",
+          "format": "time_series",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{instance}}",
+          "range": false,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "PgBouncer Status",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "/(\\w*-\\w*).*/",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "eeyyp0m56fu2ob"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [
             {
               "options": {
@@ -56,10 +142,6 @@
               {
                 "color": "green",
                 "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -70,7 +152,7 @@
         "h": 2,
         "w": 4,
         "x": 0,
-        "y": 0
+        "y": 2
       },
       "id": 1,
       "options": {
@@ -127,11 +209,11 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "red",
                 "value": 0
               },
               {
-                "color": "red",
+                "color": "green",
                 "value": 80
               }
             ]
@@ -160,7 +242,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 0
+        "y": 2
       },
       "id": 8,
       "options": {
@@ -206,7 +288,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 6
       },
       "id": 7,
       "options": {
@@ -251,7 +333,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 14
       },
       "id": 3,
       "options": {
@@ -296,7 +378,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 22
       },
       "id": 2,
       "options": {
@@ -342,7 +424,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 29
       },
       "id": 4,
       "options": {
@@ -387,7 +469,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 37
       },
       "id": 5,
       "options": {
@@ -432,7 +514,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 44
+        "y": 46
       },
       "id": 6,
       "options": {
