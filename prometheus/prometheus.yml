@@ -5,11 +5,32 @@ scrape_configs:
     scrape_interval: 3s
     static_configs:
       - targets:
-          - haproxy-kc:8405
-          - haproxy-db:8405
+        - haproxy-kc:8405
+        - haproxy-db:8405
   - job_name: 'keycloak-metrics'
     scrape_interval: 3s
     static_configs:
       - targets:
-          - keycloak1:9000
-          - keycloak2:9000
+        - keycloak1:9000
+        - keycloak2:9000
+  - job_name: 'pgbouncer-metrics'
+    scrape_interval: 3s
+    static_configs:
+      - targets:
+        - pgbouncer-exporter1:9127
+        - pgbouncer-exporter2:9127
+        - pgbouncer-exporter3:9127
+  # - job_name: 'consul-example'
+  #   scrape_interval: 3s
+  #   metrics_path: /v1/agent/metrics
+  #   consul_sd_configs:
+  #     - server: consul-client1:8500
+  #       scheme: http
+  #       services:
+  #         - consul
+  #   relabel_configs:
+  #     - action: replace
+  #       source_labels: [__meta_consul_address]
+  #       target_label: __address__
+  #       regex: '(.*)'
+  #       replacement: '$1:8500'
