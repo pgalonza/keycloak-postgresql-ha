@@ -2,6 +2,9 @@
 
 This project is a demo of Keycloak and PostgreSQL in high availability configuration.
 
+> [!IMPORTANT]
+> Currently, pgbouncer lacks fault tolerance. If pgbouncer is inaccessible for the PostgreSQL master node, the database will become unavailab
+
 ## 📋 Overview
 
 ### Key Features
